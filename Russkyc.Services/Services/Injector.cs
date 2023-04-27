@@ -29,6 +29,10 @@ namespace Russkyc.Services.Services
         {
             if (_instance is null)
             {
+                if (_container is null)
+                {
+                    _container = new DependencyContainer();
+                }
                 _instance = new Injector();
             }
                 

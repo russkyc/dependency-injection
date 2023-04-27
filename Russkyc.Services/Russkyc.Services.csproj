@@ -4,6 +4,21 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <AssemblyName>Russkyc.Services</AssemblyName>
         <RootNamespace>Russkyc.Services</RootNamespace>
+        <LangVersion>8</LangVersion>
+        <Title>Service Manager</Title>
+        <Copyright>Russell Camo 2023</Copyright>
+        <PackageIcon>Resources\Images\Russkyc.png</PackageIcon>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
+    <PropertyGroup>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Update="Resources\Images\Russkyc.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
+    </ItemGroup>
 
 </Project>

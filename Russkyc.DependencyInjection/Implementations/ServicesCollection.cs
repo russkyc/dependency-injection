@@ -55,8 +55,8 @@ namespace Russkyc.DependencyInjection.Implementations
         public IServicesCollection AddSingleton<RegisterAs, RegisteredTo>()
         {
             var constructors = typeof(RegisteredTo).GetConstructors();
-            var parameters = constructors.Length > 0 ? constructors[0].GetParameters() : Array.Empty<ParameterInfo>();
-            var services = parameters.Select(param => Resolve(param.ParameterType)).ToArray();
+            var parameters = constructors.Length > 0 ? constructors.FirstOrDefault(constructor => constructor.GetParameters().Length > 0)?.GetParameters() : Array.Empty<ParameterInfo>();
+            var services = (parameters ?? Array.Empty<ParameterInfo>()).Select(param => Resolve(param.ParameterType)).ToArray();
             var registerService = constructors.Length > 0
                 ? Activator.CreateInstance(typeof(RegisteredTo), services)
                 : Activator.CreateInstance(typeof(RegisteredTo));
@@ -76,8 +76,8 @@ namespace Russkyc.DependencyInjection.Implementations
         public IServicesCollection AddSingleton<RegisterAs, RegisteredTo>(string name)
         {
             var constructors = typeof(RegisteredTo).GetConstructors();
-            var parameters = constructors.Length > 0 ? constructors[0].GetParameters() : Array.Empty<ParameterInfo>();
-            var services = parameters.Select(param => Resolve(param.ParameterType)).ToArray();
+            var parameters = constructors.Length > 0 ? constructors.FirstOrDefault(constructor => constructor.GetParameters().Length > 0)?.GetParameters() : Array.Empty<ParameterInfo>();
+            var services = (parameters ?? Array.Empty<ParameterInfo>()).Select(param => Resolve(param.ParameterType)).ToArray();
             var registerService = constructors.Length > 0
                 ? Activator.CreateInstance(typeof(RegisteredTo), services)
                 : Activator.CreateInstance(typeof(RegisteredTo));

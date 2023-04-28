@@ -1,24 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <AssemblyName>Russkyc.Services</AssemblyName>
-        <RootNamespace>Russkyc.Services</RootNamespace>
-        <LangVersion>8</LangVersion>
-        <Title>Service Manager</Title>
-        <Copyright>Russell Camo 2023</Copyright>
         <PackageIcon>Resources\Images\Russkyc.png</PackageIcon>
+        <Title>Minimal Dependency Injection</Title>
+        <Copyright>Russell Camo 2023</Copyright>
+        <Authors>Russell Camo</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>0.9.0</Version>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
     <PropertyGroup>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
-
     <ItemGroup>
-      <None Update="Resources\Images\Russkyc.png">
-        <Pack>True</Pack>
-        <PackagePath></PackagePath>
-      </None>
+        <None Update="Resources\Images\Russkyc.png">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
     </ItemGroup>
-
 </Project>

@@ -2,7 +2,7 @@
 using DependencyInjectionDemo.Views;
 using Russkyc.DependencyInjection.Implementations;
 
-namespace WPFMVVMProject1;
+namespace DependencyInjectionDemo;
 
 /// <summary>
 /// Interaction logic for App.xaml

@@ -1,11 +1,11 @@
-﻿using Russkyc.DependencyInjection.Implementations;
+﻿using DependencyInjectionDemo.Interfaces;
+using DependencyInjectionDemo.Models;
+using DependencyInjectionDemo.ViewModels;
+using DependencyInjectionDemo.Views;
+using Russkyc.DependencyInjection.Implementations;
 using Russkyc.DependencyInjection.Interfaces;
-using WPFMVVMProject1.Interfaces;
-using WPFMVVMProject1.Models;
-using WPFMVVMProject1.ViewModels;
-using WPFMVVMProject1.Views;
 
-namespace WPFMVVMProject1.Services;
+namespace DependencyInjectionDemo.Services;
 
 public static class BuildContainer
 {

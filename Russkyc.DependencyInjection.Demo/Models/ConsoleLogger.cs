@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using WPFMVVMProject1.Interfaces;
+using DependencyInjectionDemo.Interfaces;
 
-namespace WPFMVVMProject1.Models;
+namespace DependencyInjectionDemo.Models;
 
 public class ConsoleLogger : ILogger
 {

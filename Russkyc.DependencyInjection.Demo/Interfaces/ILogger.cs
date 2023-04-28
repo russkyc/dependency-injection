@@ -1,4 +1,4 @@
-﻿namespace WPFMVVMProject1.Interfaces;
+﻿namespace DependencyInjectionDemo.Interfaces;
 
 public interface ILogger
 {

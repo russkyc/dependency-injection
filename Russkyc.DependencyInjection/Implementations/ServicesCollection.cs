@@ -88,6 +88,7 @@ namespace Russkyc.DependencyInjection.Implementations
                     RegisterAs = typeof(RegisterAs),
                     RegisterTo = typeof(RegisteredTo),
                     RegisterService = registerService,
+                    Name = name,
                     Type = ServiceType.Singleton
                 });
             }

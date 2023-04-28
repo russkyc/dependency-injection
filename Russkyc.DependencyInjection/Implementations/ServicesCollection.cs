@@ -203,6 +203,39 @@ namespace Russkyc.DependencyInjection.Implementations
                 throw new MissingDependencyException($"No registered dependency for type {typeof(RegisterAs)}");
             }
         }
+
+        public object Resolve(string name)
+        {
+            try
+            {
+                lock (_lock)
+                {
+                    var resolved = _services.First(service => service.Name == name);
+                    switch (resolved.Type) {
+                        case ServiceType.Singleton:
+                            return resolved.RegisterService;
+                        case ServiceType.Transient:
+                            return Activator.CreateInstance(resolved.RegisterTo, resolved.RegisterTo.GetConstructors()[0].GetParameters().Select(p => Resolve(p.ParameterType)).ToArray());
+                        case ServiceType.Scoped:
+                            var scope = new StackFrame(3).GetMethod().DeclaringType?.Name;
+                            var scoped = _services.FirstOrDefault(s => s.Name == name && scope == s.RegisterScope);
+                            if (scoped == null) {
+                                var service = new Service(resolved) { RegisterScope = scope, RegisterService = Activator.CreateInstance(resolved.RegisterTo) };
+                                _services.Add(service);
+                                scoped = service;
+                            }
+                            return scoped.RegisterService;
+                        default:
+                            return Activator.CreateInstance(resolved.RegisterTo);
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw new MissingDependencyException($"No registered dependency for {name}");
+            }
+        }
+
         public object Resolve(Type registerAs)
         {
             try

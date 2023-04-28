@@ -27,52 +27,57 @@ namespace Russkyc.DependencyInjection.Implementations
 {
     public class ServicesContainer : IServicesContainer
     {
-        private readonly IServicesCollection _serviceses;
+        private readonly IServicesCollection _services;
 
-        public ServicesContainer(IServicesCollection serviceses)
+        public ServicesContainer(IServicesCollection services)
         {
-            _serviceses = serviceses;
+            _services = services;
         }
         
         public IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>()
             where RegisteredTo : new()
         {
-            _serviceses.AddSingleton<RegisteredAs,RegisteredTo>();
-            return _serviceses;
+            _services.AddSingleton<RegisteredAs,RegisteredTo>();
+            return _services;
         }
 
         public IServicesCollection AddTransient<RegisteredAs, RegisteredTo>()
             where RegisteredTo : new()
         {
-            _serviceses.AddTransient<RegisteredAs, RegisteredTo>();
-            return _serviceses;
+            _services.AddTransient<RegisteredAs, RegisteredTo>();
+            return _services;
         }
 
         public IServicesCollection AddScoped<RegisteredAs, RegisteredTo>()
             where RegisteredTo : new()
         {
-            _serviceses.AddScoped<RegisteredAs, RegisteredTo>();
-            return _serviceses;
+            _services.AddScoped<RegisteredAs, RegisteredTo>();
+            return _services;
         }
 
         public RegisteredAs Resolve<RegisteredAs>()
         {
-            return _serviceses.Resolve<RegisteredAs>();
+            return _services.Resolve<RegisteredAs>();
+        }
+
+        public object Resolve(string name)
+        {
+            return _services.Resolve(name);
         }
 
         public object Resolve(Type registeredAs)
         {
-            return _serviceses.Resolve(registeredAs);
+            return _services.Resolve(registeredAs);
         }
 
         public RegisteredAs Resolve<RegisteredAs>(string name)
         {
-            return _serviceses.Resolve<RegisteredAs>(name);
+            return _services.Resolve<RegisteredAs>(name);
         }
 
         public object Resolve(Type registeredAs, string name)
         {
-            return _serviceses.Resolve(registeredAs, name);
+            return _services.Resolve(registeredAs, name);
         }
 
         public IServicesContainer Build()

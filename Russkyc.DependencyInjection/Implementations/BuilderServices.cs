@@ -35,8 +35,12 @@ namespace Russkyc.DependencyInjection.Implementations
         
         public static T Resolve<T>()
         {
-            var resolved = _servicesContainer.Resolve<T>();
-            return (T) _servicesContainer.Resolve(resolved.GetType());
+            return (T) _servicesContainer.Resolve(typeof(T));
+        }
+        
+        public static object Resolve(string name)
+        {
+            return _servicesContainer.Resolve(name);
         }
 
         public static TRegisterAs Resolve<TRegisterAs>(string name)

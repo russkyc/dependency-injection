@@ -40,6 +40,7 @@ namespace Russkyc.DependencyInjection.Interfaces
         IServicesCollection AddScoped<RegisteredAs, RegisteredTo>();
         IServicesCollection AddScoped<RegisteredAs, RegisteredTo>(string name);
         RegisterAs Resolve<RegisterAs>();
+        object Resolve(string name);
         object Resolve(Type registerAs);
         RegisterAs Resolve<RegisterAs>(string name);
         object Resolve(Type registerAs, string name);

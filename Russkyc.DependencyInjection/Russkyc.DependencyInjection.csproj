@@ -6,7 +6,7 @@
         <Copyright>Russell Camo 2023</Copyright>
         <Authors>Russell Camo</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>0.9.3</Version>
+        <Version>0.9.7</Version>
         <LangVersion>8</LangVersion>
         <PackageProjectUrl>https://github.com/russkyc/dependency-injection</PackageProjectUrl>
         <RepositoryUrl>https://github.com/russkyc/dependency-injection</RepositoryUrl>
@@ -20,5 +20,6 @@
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </None>
+        <None Remove="README.md" />
     </ItemGroup>
 </Project>

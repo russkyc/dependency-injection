@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using Russkyc.DependencyInjection.Interfaces;
 
 namespace Russkyc.DependencyInjection.Implementations
@@ -37,6 +38,17 @@ namespace Russkyc.DependencyInjection.Implementations
         {
             return (T) _servicesContainer.Resolve(typeof(T));
         }
+
+        public static object Resolve(object type)
+        {
+            return _servicesContainer.Resolve(type.GetType());
+        }
+        
+        public static object Resolve(Type type)
+        {
+            return _servicesContainer.Resolve(type);
+        }
+
         
         public static object Resolve(string name)
         {

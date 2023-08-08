@@ -30,17 +30,18 @@ using Russkyc.DependencyInjection.Interfaces;
 
 namespace Russkyc.DependencyInjection.Implementations
 {
-    public class ServicesContainer : IServicesContainer
+    public class ServicesContainer : IServicesContainer,
+        IServicesCollection
     {
         private readonly object _lock = new object();
         private readonly ICollection<IService> _services = new List<IService>();
 
-        public IServicesContainer AddSingleton<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
+        public IServicesCollection AddSingleton<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
         {
             return AddSingleton<RegisteredAs, RegisteredAs>(name, builder);
         }
 
-        public IServicesContainer AddSingleton<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null)
+        public IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null)
         {
             var constructors = typeof(RegisteredTo).GetConstructors();
             var parameters = constructors.Length > 0 ? constructors.FirstOrDefault(constructor => constructor.GetParameters().Length > 0)?.GetParameters() : Array.Empty<ParameterInfo>();
@@ -66,12 +67,12 @@ namespace Russkyc.DependencyInjection.Implementations
             return this;
         }
 
-        public IServicesContainer AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
+        public IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
         {
             return AddTransient<RegisteredAs, RegisteredAs>(name, builder);
         }
 
-        public IServicesContainer AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null)
+        public IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null)
         {
             lock (_lock)
             {
@@ -144,6 +145,12 @@ namespace Russkyc.DependencyInjection.Implementations
                 return _services;
             }
         }
+        
+        public IServicesContainer Build()
+        {
+            return this;
+        }
+
 
     }
 }

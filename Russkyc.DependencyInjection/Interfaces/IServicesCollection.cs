@@ -21,14 +21,15 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 
 namespace Russkyc.DependencyInjection.Interfaces
 {
-    public interface IServicesContainer
+    public interface IServicesCollection
     {
-        RegisterAs Resolve<RegisterAs>(string name = null);
-        object Resolve(Type registerAs, string name = null);
-        ICollection<IService> GetServices();
+        IServicesCollection AddSingleton<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null);
+        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null);
+        IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null);
+        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null);
+        IServicesContainer Build();
     }
 }

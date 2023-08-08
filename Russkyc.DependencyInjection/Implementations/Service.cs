@@ -35,6 +35,7 @@ namespace Russkyc.DependencyInjection.Implementations
         public ServiceType Type { get; set; }
         public object RegisterService { get; set; }
         public object RegisterContext { get; set; }
+        public object Builder { get; set; }
 
         public Service()
         {
@@ -50,6 +51,7 @@ namespace Russkyc.DependencyInjection.Implementations
             RegisterScope = service.RegisterScope;
             RegisterService = service.RegisterService;
             RegisterContext = service.RegisterContext;
+            Builder = service.Builder;
         }
     }
 }

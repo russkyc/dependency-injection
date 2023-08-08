@@ -11,10 +11,9 @@ public static class BuildContainer
 {
     public static IServicesContainer ConfigureServices()
     {
-        return new ServicesCollection()
+        return new ServicesContainer()
             .AddSingleton<ILogger,ConsoleLogger>()
             .AddSingleton<IMainViewModel,MainViewModel>()
-            .AddTransient<MainView>()
-            .Build();
+            .AddTransient<MainView>();
     }
 }

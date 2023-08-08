@@ -8,11 +8,10 @@ A bare-bones dependency injection container with auto dependency resolving.
 
 ```csharp
 // Create container
-var services = new ServicesCollection()
+var services = new ServicesContainer()
             .AddSingleton<ILogger, ConsoleLogger>()
             .AddSingleton<IMainViewModel, MainViewModel>()
-            .AddTransient<MainView>()
-            .Build();
+            .AddTransient<MainView>();
 
 // Build container
 BuilderServices.BuildWithContainer(services);
@@ -45,8 +44,8 @@ BuilderServices.BuildWithContainer(BuildContainer.ConfigureServices());
 BuilderServices.Resolve<MainView>().Show();
 ```
 
-## Auto resolve dependencies
-Dependency auto resolves through constructor injection. Here's what that looks like:
+## Autowire dependencies
+Dependency autowiring is done through constructor injection. Here's what that looks like:
 
 1. Setup
 
@@ -73,20 +72,12 @@ public static class BuildContainer
     {
         // Order is important.
         // dependencies to be injected should be registered first
-        return new ServicesCollection()
+        return new ServicesContainer()
             // Register Logger
             .AddSingleton<ILogger,ConsoleLogger>()
             // Register ViewModel
             .AddSingleton<IMainViewModel,MainViewModel>()
-            .AddTransient<MainView>()
-            .Build();
+            .AddTransient<MainView>();
     }
 }
-```
-
-3. Resolving
-
-```csharp
-// Auto injects the registered ILogger Service(ConsoleLogger) to the constructor
-var viewModel = BuilderServices.Resolve<IMainViewModel>();
 ```

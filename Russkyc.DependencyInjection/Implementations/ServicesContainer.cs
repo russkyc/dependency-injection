@@ -21,42 +21,175 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Russkyc.DependencyInjection.Enums;
+using Russkyc.DependencyInjection.Exceptions;
 using Russkyc.DependencyInjection.Interfaces;
 
 namespace Russkyc.DependencyInjection.Implementations
 {
     public class ServicesContainer : IServicesContainer
     {
-        private readonly IServicesCollection _services;
+        private readonly object _lock = new object();
+        private readonly ICollection<IService> _services = new List<IService>();
 
-        public ServicesContainer(IServicesCollection services)
+        public IServicesContainer AddSingleton<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
         {
-            _services = services;
+            return AddSingleton<RegisteredAs, RegisteredAs>(name, builder);
         }
 
-        public RegisteredAs Resolve<RegisteredAs>()
+        public IServicesContainer AddSingleton<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null)
         {
-            return _services.Resolve<RegisteredAs>();
-        }
-
-        public object Resolve(Type registeredAs)
-        {
-            return _services.Resolve(registeredAs);
-        }
-
-        public RegisteredAs Resolve<RegisteredAs>(string name)
-        {
-            return _services.Resolve<RegisteredAs>(name);
-        }
-
-        public object Resolve(Type registeredAs, string name)
-        {
-            return _services.Resolve(registeredAs, name);
-        }
-
-        public IServicesContainer Build()
-        {
+            var constructors = typeof(RegisteredTo).GetConstructors();
+            var parameters = constructors.Length > 0 ? constructors.FirstOrDefault(constructor => constructor.GetParameters().Length > 0)?.GetParameters() : Array.Empty<ParameterInfo>();
+            var services = (parameters ?? Array.Empty<ParameterInfo>()).Select(param => Resolve(param.ParameterType)).ToArray();
+            var registerService = constructors.Length > 0
+                ? Activator.CreateInstance(typeof(RegisteredTo), services)
+                : Activator.CreateInstance(typeof(RegisteredTo));
+            if (builder != null)
+            {
+                builder((RegisteredAs)registerService);
+            }
+            lock (_lock)
+            {
+                _services.Add(new Service
+                {
+                    RegisterAs = typeof(RegisteredAs),
+                    RegisterTo = typeof(RegisteredTo),
+                    RegisterService = registerService,
+                    Name = name,
+                    Type = ServiceType.Singleton
+                });
+            }
             return this;
         }
+
+        public IServicesContainer AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
+        {
+            return AddTransient<RegisteredAs, RegisteredAs>(name, builder);
+        }
+
+        public IServicesContainer AddTransient<RegisteredAs, RegisteredTo>(Action<RegisteredAs> builder = null)
+        {
+            lock (_lock)
+            {
+                _services.Add(new Service
+                {
+                    RegisterAs = typeof(RegisteredAs),
+                    RegisterTo = typeof(RegisteredTo),
+                    Type = ServiceType.Transient,
+                    Builder = builder
+                });
+            }
+            return this;
+        }
+
+        public IServicesContainer AddTransient<RegisteredAs, RegisteredTo>(string name, Action<RegisteredAs> builder = null)
+        {
+            lock (_lock)
+            {
+                _services.Add(new Service
+                {
+                    Name = name,
+                    RegisterAs = typeof(RegisteredAs),
+                    RegisterTo = typeof(RegisteredTo),
+                    Type = ServiceType.Transient,
+                    Builder = builder
+                });
+            }
+            return this;
+        }
+
+        public RegisterAs Resolve<RegisterAs>()
+        {
+            return (RegisterAs)Resolve(typeof(RegisterAs));
+        }
+
+        public object Resolve(Type registerAs)
+        {
+            try
+            {
+                lock (_lock)
+                {
+                    var resolved = _services.First(service => service.RegisterAs == registerAs);
+
+                    if (resolved.Type == ServiceType.Singleton)
+                    {
+                        return resolved.RegisterService;
+                    }
+                    return Activator.CreateInstance(resolved.RegisterTo,
+                        resolved.RegisterTo
+                            .GetConstructors()[0]
+                            .GetParameters()
+                            .Select(p => Resolve(p.ParameterType))
+                            .ToArray());
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw new MissingDependencyException($"No registered dependency for type {registerAs}");
+            }
+        }
+
+        public RegisterAs Resolve<RegisterAs>(string name)
+        {
+            try
+            {
+                lock (_lock)
+                {
+                    var resolved = _services.First(service => service.RegisterAs == typeof(RegisterAs) && service.Name == name);
+                    switch (resolved.Type) {
+                        case ServiceType.Singleton:
+                            return (RegisterAs)resolved.RegisterService;
+                        case ServiceType.Transient:
+                            return (RegisterAs)Activator.CreateInstance(resolved.RegisterTo, resolved.RegisterTo.GetConstructors()[0].GetParameters().Select(p => Resolve(p.ParameterType)).ToArray());
+                        default:
+                            return (RegisterAs)Activator.CreateInstance(resolved.RegisterTo);
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw new MissingDependencyException($"No registered dependency for type {typeof(RegisterAs)}");
+            }
+        }
+        
+        public object Resolve(Type registerAs, string name)
+        {
+            try
+            {
+                lock (_lock)
+                {
+                    var resolved = _services.First(service => service.RegisterAs == registerAs && service.Name == name);
+
+                    if (resolved.Type == ServiceType.Singleton)
+                    {
+                        return resolved.RegisterService;
+                    }
+                    
+                    return Activator.CreateInstance(resolved.RegisterTo,
+                        resolved.RegisterTo
+                            .GetConstructors()[0]
+                            .GetParameters()
+                            .Select(p => Resolve(p.ParameterType))
+                            .ToArray());
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw new MissingDependencyException($"No registered dependency for type {registerAs}");
+            }
+        }
+
+        public ICollection<IService> GetServices()
+        {
+            lock (_lock)
+            {
+                return _services;
+            }
+        }
+
     }
 }

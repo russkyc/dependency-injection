@@ -71,22 +71,7 @@ namespace Russkyc.DependencyInjection.Implementations
             return AddTransient<RegisteredAs, RegisteredAs>(name, builder);
         }
 
-        public IServicesContainer AddTransient<RegisteredAs, RegisteredTo>(Action<RegisteredAs> builder = null)
-        {
-            lock (_lock)
-            {
-                _services.Add(new Service
-                {
-                    RegisterAs = typeof(RegisteredAs),
-                    RegisterTo = typeof(RegisteredTo),
-                    Type = ServiceType.Transient,
-                    Builder = builder
-                });
-            }
-            return this;
-        }
-
-        public IServicesContainer AddTransient<RegisteredAs, RegisteredTo>(string name, Action<RegisteredAs> builder = null)
+        public IServicesContainer AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null)
         {
             lock (_lock)
             {
@@ -102,38 +87,7 @@ namespace Russkyc.DependencyInjection.Implementations
             return this;
         }
 
-        public RegisterAs Resolve<RegisterAs>()
-        {
-            return (RegisterAs)Resolve(typeof(RegisterAs));
-        }
-
-        public object Resolve(Type registerAs)
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    var resolved = _services.First(service => service.RegisterAs == registerAs);
-
-                    if (resolved.Type == ServiceType.Singleton)
-                    {
-                        return resolved.RegisterService;
-                    }
-                    return Activator.CreateInstance(resolved.RegisterTo,
-                        resolved.RegisterTo
-                            .GetConstructors()[0]
-                            .GetParameters()
-                            .Select(p => Resolve(p.ParameterType))
-                            .ToArray());
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                throw new MissingDependencyException($"No registered dependency for type {registerAs}");
-            }
-        }
-
-        public RegisterAs Resolve<RegisterAs>(string name)
+        public RegisterAs Resolve<RegisterAs>(string name = null)
         {
             try
             {
@@ -156,7 +110,7 @@ namespace Russkyc.DependencyInjection.Implementations
             }
         }
         
-        public object Resolve(Type registerAs, string name)
+        public object Resolve(Type registerAs, string name = null)
         {
             try
             {

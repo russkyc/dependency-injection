@@ -11,7 +11,8 @@ A bare-bones dependency injection container with auto dependency resolving.
 var services = new ServicesContainer()
             .AddSingleton<ILogger, ConsoleLogger>()
             .AddSingleton<IMainViewModel, MainViewModel>()
-            .AddTransient<MainView>();
+            .AddTransient<MainView>()
+            .Build;
 
 // Build container
 BuilderServices.BuildWithContainer(services);
@@ -29,7 +30,7 @@ public static class BuildContainer
     // Returns container with registered dependencies
     public static IServicesContainer ConfigureServices()
     {
-        return new ServicesCollection()
+        return new ServicesContainer()
             .AddSingleton<ILogger,ConsoleLogger>()
             .AddSingleton<IMainViewModel,MainViewModel>()
             .AddTransient<MainView>()
@@ -77,7 +78,8 @@ public static class BuildContainer
             .AddSingleton<ILogger,ConsoleLogger>()
             // Register ViewModel
             .AddSingleton<IMainViewModel,MainViewModel>()
-            .AddTransient<MainView>();
+            .AddTransient<MainView>()
+            .Build();
     }
 }
 ```

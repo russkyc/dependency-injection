@@ -34,5 +34,6 @@ namespace Russkyc.DependencyInjection.Interfaces
         ServiceType Type { get; set; }
         object RegisterService { get; set; }
         object RegisterContext { get; set; }
+        object Builder { get; set; }
     }
 }

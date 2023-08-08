@@ -26,14 +26,7 @@ namespace Russkyc.DependencyInjection.Interfaces
 {
     public interface IServicesContainer
     {
-        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>()
-            where RegisteredTo : new();
-        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>()
-            where RegisteredTo : new();
-        IServicesCollection AddScoped<RegisteredAs, RegisteredTo>()
-            where RegisteredTo : new();
         RegisteredAs Resolve<RegisteredAs>();
-        object Resolve(string name);
         object Resolve(Type registeredAs);
         RegisteredAs Resolve<RegisteredAs>(string name);
         object Resolve(Type registeredAs, string name);

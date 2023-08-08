@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Russkyc.DependencyInjection.Enums;
@@ -33,26 +32,15 @@ namespace Russkyc.DependencyInjection.Implementations
 {
     public class ServicesCollection : IServicesCollection
     {
-        private readonly object _lock;
-        private readonly ICollection<IService> _services;
+        private readonly object _lock = new object();
+        private readonly ICollection<IService> _services = new List<IService>();
 
-        public ServicesCollection()
+        public IServicesCollection AddSingleton<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
         {
-            _lock = new object();
-            _services = new List<IService>();
+            return AddSingleton<RegisteredAs, RegisteredAs>(name, builder);
         }
 
-        public IServicesCollection AddSingleton<RegisterAs>()
-        {
-            return AddSingleton<RegisterAs, RegisterAs>();
-        }
-
-        public IServicesCollection AddSingleton<RegisterAs>(string name)
-        {
-            return AddSingleton<RegisterAs, RegisterAs>(name);
-        }
-
-        public IServicesCollection AddSingleton<RegisterAs, RegisteredTo>()
+        public IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null)
         {
             var constructors = typeof(RegisteredTo).GetConstructors();
             var parameters = constructors.Length > 0 ? constructors.FirstOrDefault(constructor => constructor.GetParameters().Length > 0)?.GetParameters() : Array.Empty<ParameterInfo>();
@@ -60,32 +48,15 @@ namespace Russkyc.DependencyInjection.Implementations
             var registerService = constructors.Length > 0
                 ? Activator.CreateInstance(typeof(RegisteredTo), services)
                 : Activator.CreateInstance(typeof(RegisteredTo));
-            lock (_lock)
+            if (builder != null)
             {
-                _services.Add(new Service
-                {
-                    RegisterAs = typeof(RegisterAs),
-                    RegisterTo = typeof(RegisteredTo),
-                    RegisterService = registerService,
-                    Type = ServiceType.Singleton
-                });
+                builder((RegisteredAs)registerService);
             }
-            return this;
-        }
-
-        public IServicesCollection AddSingleton<RegisterAs, RegisteredTo>(string name)
-        {
-            var constructors = typeof(RegisteredTo).GetConstructors();
-            var parameters = constructors.Length > 0 ? constructors.FirstOrDefault(constructor => constructor.GetParameters().Length > 0)?.GetParameters() : Array.Empty<ParameterInfo>();
-            var services = (parameters ?? Array.Empty<ParameterInfo>()).Select(param => Resolve(param.ParameterType)).ToArray();
-            var registerService = constructors.Length > 0
-                ? Activator.CreateInstance(typeof(RegisteredTo), services)
-                : Activator.CreateInstance(typeof(RegisteredTo));
             lock (_lock)
             {
                 _services.Add(new Service
                 {
-                    RegisterAs = typeof(RegisterAs),
+                    RegisterAs = typeof(RegisteredAs),
                     RegisterTo = typeof(RegisteredTo),
                     RegisterService = registerService,
                     Name = name,
@@ -95,79 +66,37 @@ namespace Russkyc.DependencyInjection.Implementations
             return this;
         }
 
-        public IServicesCollection AddTransient<RegisterAs>()
+        public IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
         {
-            return AddTransient<RegisterAs,RegisterAs>();
+            return AddTransient<RegisteredAs, RegisteredAs>(name, builder);
         }
 
-        public IServicesCollection AddTransient<RegisterAs>(string name)
-        {
-            return AddTransient<RegisterAs,RegisterAs>(name);
-        }
-
-        public IServicesCollection AddTransient<RegisterAs, RegisteredTo>()
+        public IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(Action<RegisteredAs> builder = null)
         {
             lock (_lock)
             {
                 _services.Add(new Service
                 {
-                    RegisterAs = typeof(RegisterAs),
+                    RegisterAs = typeof(RegisteredAs),
                     RegisterTo = typeof(RegisteredTo),
-                    Type = ServiceType.Transient
+                    Type = ServiceType.Transient,
+                    Builder = builder
                 });
             }
             return this;
         }
 
-        public IServicesCollection AddTransient<RegisterAs, RegisteredTo>(string name)
+        public IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name, Action<RegisteredAs> builder = null)
         {
             lock (_lock)
             {
                 _services.Add(new Service
                 {
                     Name = name,
-                    RegisterAs = typeof(RegisterAs),
+                    RegisterAs = typeof(RegisteredAs),
                     RegisterTo = typeof(RegisteredTo),
-                    Type = ServiceType.Transient
-                });
-            }
-            return this;
-        }
-
-        public IServicesCollection AddScoped<RegisterAs>()
-        {
-            return AddScoped<RegisterAs,RegisterAs>();
-        }
-
-        public IServicesCollection AddScoped<RegisterAs>(string name)
-        {
-            return AddScoped<RegisterAs,RegisterAs>(name);
-        }
-
-        public IServicesCollection AddScoped<RegisterAs, RegisteredTo>()
-        {
-            lock (_lock)
-            {
-                _services.Add(new Service
-                {
-                    RegisterAs = typeof(RegisterAs),
-                    RegisterTo = typeof(RegisteredTo),
-                    Type = ServiceType.Scoped
-                });
-            }
-            return this;
-        }
-
-        public IServicesCollection AddScoped<RegisterAs, RegisteredTo>(string name)
-        {
-            lock (_lock)
-            {
-                _services.Add(new Service
-                {
-                    Name = name,
-                    RegisterAs = typeof(RegisterAs),
-                    RegisterTo = typeof(RegisteredTo),
-                    Type = ServiceType.Scoped
+                    Type = ServiceType.Transient,
+                    Builder = builder
                 });
             }
             return this;
@@ -175,66 +104,7 @@ namespace Russkyc.DependencyInjection.Implementations
 
         public RegisterAs Resolve<RegisterAs>()
         {
-            try
-            {
-                lock (_lock)
-                {
-                    var resolved = _services.First(service => service.RegisterAs == typeof(RegisterAs));
-                    switch (resolved.Type) {
-                        case ServiceType.Singleton:
-                            return (RegisterAs)resolved.RegisterService;
-                        case ServiceType.Transient:
-                            return (RegisterAs)Activator.CreateInstance(resolved.RegisterTo, resolved.RegisterTo.GetConstructors()[0].GetParameters().Select(p => Resolve(p.ParameterType)).ToArray());
-                        case ServiceType.Scoped:
-                            var scope = new StackFrame(3).GetMethod().DeclaringType?.Name;
-                            var scoped = _services.FirstOrDefault(s => s.RegisterAs == typeof(RegisterAs) && scope == s.RegisterScope);
-                            if (scoped == null) {
-                                var service = new Service(resolved) { RegisterScope = scope, RegisterService = Activator.CreateInstance(resolved.RegisterTo) };
-                                _services.Add(service);
-                                scoped = service;
-                            }
-                            return (RegisterAs)scoped.RegisterService;
-                        default:
-                            return (RegisterAs)Activator.CreateInstance(resolved.RegisterTo);
-                    }
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                throw new MissingDependencyException($"No registered dependency for type {typeof(RegisterAs)}");
-            }
-        }
-
-        public object Resolve(string name)
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    var resolved = _services.First(service => service.Name == name);
-                    switch (resolved.Type) {
-                        case ServiceType.Singleton:
-                            return resolved.RegisterService;
-                        case ServiceType.Transient:
-                            return Activator.CreateInstance(resolved.RegisterTo, resolved.RegisterTo.GetConstructors()[0].GetParameters().Select(p => Resolve(p.ParameterType)).ToArray());
-                        case ServiceType.Scoped:
-                            var scope = new StackFrame(3).GetMethod().DeclaringType?.Name;
-                            var scoped = _services.FirstOrDefault(s => s.Name == name && scope == s.RegisterScope);
-                            if (scoped == null) {
-                                var service = new Service(resolved) { RegisterScope = scope, RegisterService = Activator.CreateInstance(resolved.RegisterTo) };
-                                _services.Add(service);
-                                scoped = service;
-                            }
-                            return scoped.RegisterService;
-                        default:
-                            return Activator.CreateInstance(resolved.RegisterTo);
-                    }
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                throw new MissingDependencyException($"No registered dependency for {name}");
-            }
+            return (RegisterAs)Resolve(typeof(RegisterAs));
         }
 
         public object Resolve(Type registerAs)
@@ -244,23 +114,17 @@ namespace Russkyc.DependencyInjection.Implementations
                 lock (_lock)
                 {
                     var resolved = _services.First(service => service.RegisterAs == registerAs);
-                    switch (resolved.Type) {
-                        case ServiceType.Singleton:
-                            return resolved.RegisterService;
-                        case ServiceType.Transient:
-                            return Activator.CreateInstance(resolved.RegisterTo, resolved.RegisterTo.GetConstructors()[0].GetParameters().Select(p => Resolve(p.ParameterType)).ToArray());
-                        case ServiceType.Scoped:
-                            var scope = new StackFrame(3).GetMethod().DeclaringType?.Name;
-                            var scoped = _services.FirstOrDefault(s => s.RegisterAs == registerAs && scope == s.RegisterScope);
-                            if (scoped == null) {
-                                var service = new Service(resolved) { RegisterScope = scope, RegisterService = Activator.CreateInstance(resolved.RegisterTo) };
-                                _services.Add(service);
-                                scoped = service;
-                            }
-                            return scoped.RegisterService;
-                        default:
-                            return Activator.CreateInstance(resolved.RegisterTo);
+
+                    if (resolved.Type == ServiceType.Singleton)
+                    {
+                        return resolved.RegisterService;
                     }
+                    return Activator.CreateInstance(resolved.RegisterTo,
+                        resolved.RegisterTo
+                            .GetConstructors()[0]
+                            .GetParameters()
+                            .Select(p => Resolve(p.ParameterType))
+                            .ToArray());
                 }
             }
             catch (InvalidOperationException)
@@ -281,15 +145,6 @@ namespace Russkyc.DependencyInjection.Implementations
                             return (RegisterAs)resolved.RegisterService;
                         case ServiceType.Transient:
                             return (RegisterAs)Activator.CreateInstance(resolved.RegisterTo, resolved.RegisterTo.GetConstructors()[0].GetParameters().Select(p => Resolve(p.ParameterType)).ToArray());
-                        case ServiceType.Scoped:
-                            var scope = new StackFrame(3).GetMethod().DeclaringType?.Name;
-                            var scoped = _services.FirstOrDefault(s => s.RegisterAs == typeof(RegisterAs) && scope == s.RegisterScope);
-                            if (scoped == null) {
-                                var service = new Service(resolved) { RegisterScope = scope, RegisterService = Activator.CreateInstance(resolved.RegisterTo) };
-                                _services.Add(service);
-                                scoped = service;
-                            }
-                            return (RegisterAs)scoped.RegisterService;
                         default:
                             return (RegisterAs)Activator.CreateInstance(resolved.RegisterTo);
                     }
@@ -308,23 +163,18 @@ namespace Russkyc.DependencyInjection.Implementations
                 lock (_lock)
                 {
                     var resolved = _services.First(service => service.RegisterAs == registerAs && service.Name == name);
-                    switch (resolved.Type) {
-                        case ServiceType.Singleton:
-                            return resolved.RegisterService;
-                        case ServiceType.Transient:
-                            return Activator.CreateInstance(resolved.RegisterTo, resolved.RegisterTo.GetConstructors()[0].GetParameters().Select(p => Resolve(p.ParameterType)).ToArray());
-                        case ServiceType.Scoped:
-                            var scope = new StackFrame(3).GetMethod().DeclaringType?.Name;
-                            var scoped = _services.FirstOrDefault(s => s.RegisterAs == registerAs && scope == s.RegisterScope);
-                            if (scoped == null) {
-                                var service = new Service(resolved) { RegisterScope = scope, RegisterService = Activator.CreateInstance(resolved.RegisterTo) };
-                                _services.Add(service);
-                                scoped = service;
-                            }
-                            return scoped.RegisterService;
-                        default:
-                            return Activator.CreateInstance(resolved.RegisterTo);
+
+                    if (resolved.Type == ServiceType.Singleton)
+                    {
+                        return resolved.RegisterService;
                     }
+                    
+                    return Activator.CreateInstance(resolved.RegisterTo,
+                        resolved.RegisterTo
+                            .GetConstructors()[0]
+                            .GetParameters()
+                            .Select(p => Resolve(p.ParameterType))
+                            .ToArray());
                 }
             }
             catch (InvalidOperationException)

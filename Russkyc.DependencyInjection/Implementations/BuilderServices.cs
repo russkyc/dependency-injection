@@ -48,13 +48,7 @@ namespace Russkyc.DependencyInjection.Implementations
         {
             return _servicesContainer.Resolve(type);
         }
-
         
-        public static object Resolve(string name)
-        {
-            return _servicesContainer.Resolve(name);
-        }
-
         public static TRegisterAs Resolve<TRegisterAs>(string name)
         {
             return _servicesContainer.Resolve<TRegisterAs>(name);

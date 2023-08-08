@@ -24,7 +24,6 @@ namespace Russkyc.DependencyInjection.Enums
 {
     public enum ServiceType
     {
-        Scoped,
         Transient,
         Singleton
     }

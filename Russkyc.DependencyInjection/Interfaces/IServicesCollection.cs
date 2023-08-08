@@ -27,23 +27,12 @@ namespace Russkyc.DependencyInjection.Interfaces
 {
     public interface IServicesCollection
     {
-        IServicesCollection AddSingleton<RegisteredAs>();
-        IServicesCollection AddSingleton<RegisteredAs>(string name);
-        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>();
-        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name);
-        IServicesCollection AddTransient<RegisteredAs>();
-        IServicesCollection AddTransient<RegisteredAs>(string name);
-        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>();
-        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name);
-        IServicesCollection AddScoped<RegisteredAs>();
-        IServicesCollection AddScoped<RegisteredAs>(string name);
-        IServicesCollection AddScoped<RegisteredAs, RegisteredTo>();
-        IServicesCollection AddScoped<RegisteredAs, RegisteredTo>(string name);
-        RegisterAs Resolve<RegisterAs>();
-        object Resolve(string name);
-        object Resolve(Type registerAs);
-        RegisterAs Resolve<RegisterAs>(string name);
-        object Resolve(Type registerAs, string name);
+        IServicesCollection AddSingleton<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null);
+        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null);
+        IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null);
+        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null);
+        RegisterAs Resolve<RegisterAs>(string name = null);
+        object Resolve(Type registerAs, string name = null);
         ICollection<IService> GetServices();
         IServicesContainer Build();
     }

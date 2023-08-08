@@ -6,11 +6,11 @@
         <Copyright>Russell Camo 2023</Copyright>
         <Authors>Russell Camo</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>0.9.7</Version>
+        <Version>0.10.0</Version>
         <LangVersion>8</LangVersion>
         <PackageProjectUrl>https://github.com/russkyc/dependency-injection</PackageProjectUrl>
         <RepositoryUrl>https://github.com/russkyc/dependency-injection</RepositoryUrl>
-        <PackageReleaseNotes>- add dynamic resolve by name</PackageReleaseNotes>
+        <PackageReleaseNotes>- removed scoped type</PackageReleaseNotes>
     </PropertyGroup>
     <PropertyGroup>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

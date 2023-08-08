@@ -33,36 +33,10 @@ namespace Russkyc.DependencyInjection.Implementations
         {
             _services = services;
         }
-        
-        public IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>()
-            where RegisteredTo : new()
-        {
-            _services.AddSingleton<RegisteredAs,RegisteredTo>();
-            return _services;
-        }
-
-        public IServicesCollection AddTransient<RegisteredAs, RegisteredTo>()
-            where RegisteredTo : new()
-        {
-            _services.AddTransient<RegisteredAs, RegisteredTo>();
-            return _services;
-        }
-
-        public IServicesCollection AddScoped<RegisteredAs, RegisteredTo>()
-            where RegisteredTo : new()
-        {
-            _services.AddScoped<RegisteredAs, RegisteredTo>();
-            return _services;
-        }
 
         public RegisteredAs Resolve<RegisteredAs>()
         {
             return _services.Resolve<RegisteredAs>();
-        }
-
-        public object Resolve(string name)
-        {
-            return _services.Resolve(name);
         }
 
         public object Resolve(Type registeredAs)

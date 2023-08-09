@@ -36,6 +36,7 @@ public static class BuildContainer
         return new ServicesContainer()
             .AddSingleton<ILogger,ConsoleLogger>()
             .AddSingleton<IMainViewModel,MainViewModel>()
+            .AddSingleton<SecondaryView>()
             .AddTransient<MainView>()
             .Build();
     }

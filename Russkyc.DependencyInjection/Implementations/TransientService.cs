@@ -21,19 +21,15 @@
 // SOFTWARE.
 
 using System;
-using Russkyc.DependencyInjection.Enums;
+using Russkyc.DependencyInjection.Interfaces;
 
-namespace Russkyc.DependencyInjection.Interfaces
+namespace Russkyc.DependencyInjection.Implementations
 {
-    public interface IService
+    public class TransientService : IRegisteredService
     {
-        string Name { get; set; }
-        Type RegisterAs { get; set; }
-        Type RegisterTo { get; set; }
-        string RegisterScope { get; set; }
-        ServiceType Type { get; set; }
-        object RegisterService { get; set; }
-        object RegisterContext { get; set; }
-        object Builder { get; set; }
+        public string Identifier { get; set; }
+        public Type RegisterAs { get; set; }
+        public Type RegisterTo { get; set; }
+        public object Service { get; set; }
     }
 }

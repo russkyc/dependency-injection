@@ -14,8 +14,8 @@ public partial class App
     /// </summary>
     public App()
     {
-        BuilderServices.BuildWithContainer(BuildContainer.ConfigureServices());
-        BuilderServices.Resolve<MainView>().Show();
-        BuilderServices.Resolve<MainView>().Show();
+        var container = BuildContainer.ConfigureServices();
+        container.Resolve<MainView>().Show();
+        container.Resolve<MainView>().Show();
     }
 }

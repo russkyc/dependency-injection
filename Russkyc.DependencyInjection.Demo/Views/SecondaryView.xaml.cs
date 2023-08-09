@@ -20,11 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Russkyc.DependencyInjection.Enums
+using System.Windows;
+
+namespace DependencyInjectionDemo.Views;
+
+public partial class SecondaryView : Window
 {
-    public enum ServiceType
+    public SecondaryView()
     {
-        Transient,
-        Singleton
+        InitializeComponent();
     }
 }

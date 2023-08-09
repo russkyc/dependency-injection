@@ -21,12 +21,15 @@
 // SOFTWARE.
 
 using System;
+using Russkyc.DependencyInjection.Interfaces;
 
-namespace Russkyc.DependencyInjection.Interfaces
+namespace Russkyc.DependencyInjection.Implementations
 {
-    public interface IServicesContainer
+    public class SingletonService : IRegisteredService
     {
-        RegisterAs Resolve<RegisterAs>(string name = null);
-        object Resolve(Type registerAs, string name = null);
+        public string Identifier { get; set; }
+        public Type RegisterAs { get; set; }
+        public Type RegisterTo { get; set; }
+        public object Service { get; set; }
     }
 }

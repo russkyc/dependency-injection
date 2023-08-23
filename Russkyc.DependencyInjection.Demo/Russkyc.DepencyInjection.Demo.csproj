@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Russkyc.DependencyInjection\Russkyc.DependencyInjection.csproj" />
+      <ProjectReference Include="..\TestNewAssembly\TestNewAssembly.csproj" />
     </ItemGroup>
 
 </Project>

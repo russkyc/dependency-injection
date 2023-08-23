@@ -21,19 +21,32 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
+using Russkyc.DependencyInjection.Implementations;
+using Russkyc.DependencyInjection.Interfaces;
 
-namespace Russkyc.DependencyInjection.Interfaces
+namespace Russkyc.DependencyInjection.Helpers
 {
-    public interface IServicesCollection
+    public static class ServiceResolver
     {
-        IServicesCollection AddSingleton<RegisteredAs>(string name = null);
-        IServicesCollection AddSingleton(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null);
-        IServicesCollection AddTransient(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesContainer Build();
-        IRegisteredService Get(Type registeredAs, string name = null);
+        public static object ResolveServiceInstance(this IServicesContainer servicesContainer,
+            IRegisteredService service)
+        {
+            if (service is SingletonService singletonService)
+            {
+                if (singletonService.Service is null)
+                {
+                    singletonService.Service =
+                        servicesContainer.ConstructRegisteredType(singletonService.RegisterTo);
+                }
+                return singletonService.Service;
+            }
+
+            if (service is TransientService transientService)
+            {
+                return servicesContainer.ConstructRegisteredType(transientService.RegisterTo);
+            }
+
+            throw new InvalidOperationException($"Unsupported service type: {service}");
+        }
     }
 }

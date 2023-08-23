@@ -20,20 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
+namespace TestNewAssembly;
 
-namespace Russkyc.DependencyInjection.Interfaces
+public interface IClass1
 {
-    public interface IServicesCollection
-    {
-        IServicesCollection AddSingleton<RegisteredAs>(string name = null);
-        IServicesCollection AddSingleton(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null);
-        IServicesCollection AddTransient(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesContainer Build();
-        IRegisteredService Get(Type registeredAs, string name = null);
-    }
+    public void SayHellow();
 }

@@ -33,7 +33,7 @@ public static class BuildContainer
 {
     public static IServicesContainer ConfigureServices()
     {
-        return new ServicesContainer()
+        return new ServicesCollection()
             .AddSingleton<ILogger,ConsoleLogger>()
             .AddSingleton<IMainViewModel,MainViewModel>()
             .AddSingleton<SecondaryView>()

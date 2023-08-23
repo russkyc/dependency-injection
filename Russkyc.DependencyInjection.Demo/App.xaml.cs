@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using DependencyInjectionDemo.Views;
+using Russkyc.DependencyInjection.Helpers;
 using Russkyc.DependencyInjection.Implementations;
 
 namespace DependencyInjectionDemo;
@@ -16,12 +17,16 @@ public partial class App
     {
         // Get Current Assembly
         var assembly = Assembly.GetExecutingAssembly();
+        var assembly2 = Assembly.Load("TestNewAssembly");
         
         // Build Container
-        var container = new ServicesContainer()
+        var container = new ServicesCollection()
             // Add Services From Assembly
-            .AddServicesFromAssembly(assembly);
+            .AddServicesFromAssembly(assembly2)
+            .AddServicesFromAssembly(assembly)
+            .Build();
         
+        container.Resolve<MainView>().Show();
         container.Resolve<MainView>().Show();
     }
 }

@@ -29,6 +29,5 @@ namespace Russkyc.DependencyInjection.Interfaces
         string Identifier { get; set; }
         Type RegisterAs { get; set; }
         Type RegisterTo { get; set; }
-        object Service { get; set; }
     }
 }

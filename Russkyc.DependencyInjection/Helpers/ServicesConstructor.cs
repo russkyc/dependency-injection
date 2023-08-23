@@ -21,19 +21,25 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
+using System.Linq;
+using Russkyc.DependencyInjection.Interfaces;
 
-namespace Russkyc.DependencyInjection.Interfaces
+namespace Russkyc.DependencyInjection.Helpers
 {
-    public interface IServicesCollection
+    public static class ServiceConstructor
     {
-        IServicesCollection AddSingleton<RegisteredAs>(string name = null);
-        IServicesCollection AddSingleton(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null);
-        IServicesCollection AddTransient(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesContainer Build();
-        IRegisteredService Get(Type registeredAs, string name = null);
+        public static object ConstructRegisteredType(this IServicesContainer servicesContainer, Type registeredToType)
+        {
+            
+            var constructors = registeredToType.GetConstructors();
+            if (constructors.Length == 0)
+            {
+                return Activator.CreateInstance(registeredToType);
+            }
+
+            var neededServices = constructors[0].GetParameters()
+                .Select(param => servicesContainer.Resolve(param.ParameterType)).ToArray();
+            return Activator.CreateInstance(registeredToType, neededServices);
+        }
     }
 }

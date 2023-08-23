@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-<a href="https://www.nuget.org/packages/Russkyc.ModernControls.WPF">Russkyc.DependencyInjection</a> is a fast and minimal dependency injection container with auto dependency resolving.
+<a href="https://www.nuget.org/packages/Russkyc.DependencyInjection">Russkyc.DependencyInjection</a> is a fast and minimal dependency injection container with auto dependency resolving.
 </p>
 
 ---

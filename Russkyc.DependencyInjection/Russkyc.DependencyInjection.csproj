@@ -18,6 +18,7 @@
     <ItemGroup>
         <None Update="Resources\Images\Russkyc.png">
             <Pack>True</Pack>
+            <PackagePath></PackagePath>
         </None>
         <None Remove="README.md" />
     </ItemGroup>

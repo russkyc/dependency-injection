@@ -23,17 +23,17 @@
 using System;
 using Russkyc.DependencyInjection.Enums;
 
-namespace Russkyc.DependencyInjection.Interfaces
+namespace Russkyc.DependencyInjection.Attributes
 {
-    public interface IService
+    public class ServiceAttribute : Attribute
     {
-        string Name { get; set; }
-        Type RegisterAs { get; set; }
-        Type RegisterTo { get; set; }
-        string RegisterScope { get; set; }
-        ServiceType Type { get; set; }
-        object RegisterService { get; set; }
-        object RegisterContext { get; set; }
-        object Builder { get; set; }
+        public ServiceAttribute(Scope scope = Scope.Transient, Registration registration = Registration.AsSelf)
+        {
+            Scope = scope;
+            Registration = registration;
+        }
+
+        public Scope Scope { get; }
+        public Registration Registration { get; }
     }
 }

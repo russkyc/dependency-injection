@@ -29,10 +29,5 @@ namespace Russkyc.DependencyInjection.Exceptions
         public MissingDependencyException(string message): base(message)
         { 
         }
-        public override string StackTrace
-        {
-            get => "";
-        }
-
     }
 }

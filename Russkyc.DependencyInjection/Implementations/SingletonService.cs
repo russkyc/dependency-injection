@@ -25,33 +25,11 @@ using Russkyc.DependencyInjection.Interfaces;
 
 namespace Russkyc.DependencyInjection.Implementations
 {
-    public static class BuilderServices
+    public class SingletonService : IRegisteredService
     {
-        private static IServicesContainer _servicesContainer;
-
-        public static void BuildWithContainer(IServicesContainer servicesContainer)
-        {
-            _servicesContainer = servicesContainer;
-        }
-        
-        public static T Resolve<T>()
-        {
-            return (T) _servicesContainer.Resolve(typeof(T));
-        }
-
-        public static object Resolve(object type)
-        {
-            return _servicesContainer.Resolve(type.GetType());
-        }
-        
-        public static object Resolve(Type type)
-        {
-            return _servicesContainer.Resolve(type);
-        }
-        
-        public static TRegisterAs Resolve<TRegisterAs>(string name)
-        {
-            return _servicesContainer.Resolve<TRegisterAs>(name);
-        }
+        public string Identifier { get; set; }
+        public Type RegisterAs { get; set; }
+        public Type RegisterTo { get; set; }
+        public object Service { get; set; }
     }
 }

@@ -20,20 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
+using System.Windows;
+using DependencyInjectionDemo.Interfaces;
+using Russkyc.DependencyInjection.Attributes;
 
-namespace Russkyc.DependencyInjection.Interfaces
+namespace DependencyInjectionDemo.Views;
+
+[Service]
+public partial class SecondaryView : Window
 {
-    public interface IServicesCollection
+    public SecondaryView(IMainViewModel viewModel)
     {
-        IServicesCollection AddSingleton<RegisteredAs>(string name = null);
-        IServicesCollection AddSingleton(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null);
-        IServicesCollection AddTransient(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesContainer AddServicesFromAssembly(Assembly assembly);
-        IServicesContainer Build();
+        DataContext = viewModel;
+        InitializeComponent();
     }
 }

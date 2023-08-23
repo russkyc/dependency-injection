@@ -21,37 +21,14 @@
 // SOFTWARE.
 
 using System;
-using Russkyc.DependencyInjection.Enums;
-using Russkyc.DependencyInjection.Interfaces;
 
-namespace Russkyc.DependencyInjection.Implementations
+namespace Russkyc.DependencyInjection.Interfaces
 {
-    public class Service : IService
+    public interface IRegisteredService
     {
-        public string Name { get; set; }
-        public Type RegisterAs { get; set; }
-        public Type RegisterTo { get; set; }
-        public string RegisterScope { get; set; }
-        public ServiceType Type { get; set; }
-        public object RegisterService { get; set; }
-        public object RegisterContext { get; set; }
-        public object Builder { get; set; }
-
-        public Service()
-        {
-            
-        }
-
-        public Service(IService service)
-        {
-            Name = service.Name;
-            Type = service.Type;
-            RegisterAs = service.RegisterAs;
-            RegisterTo = service.RegisterTo;
-            RegisterScope = service.RegisterScope;
-            RegisterService = service.RegisterService;
-            RegisterContext = service.RegisterContext;
-            Builder = service.Builder;
-        }
+        string Identifier { get; set; }
+        Type RegisterAs { get; set; }
+        Type RegisterTo { get; set; }
+        object Service { get; set; }
     }
 }

@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 
 namespace Russkyc.DependencyInjection.Interfaces
 {
@@ -29,6 +28,5 @@ namespace Russkyc.DependencyInjection.Interfaces
     {
         RegisterAs Resolve<RegisterAs>(string name = null);
         object Resolve(Type registerAs, string name = null);
-        ICollection<IService> GetServices();
     }
 }

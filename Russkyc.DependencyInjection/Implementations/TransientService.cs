@@ -20,11 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Russkyc.DependencyInjection.Enums
+using System;
+using Russkyc.DependencyInjection.Interfaces;
+
+namespace Russkyc.DependencyInjection.Implementations
 {
-    public enum ServiceType
+    public class TransientService : IRegisteredService
     {
-        Transient,
-        Singleton
+        public string Identifier { get; set; }
+        public Type RegisterAs { get; set; }
+        public Type RegisterTo { get; set; }
+        public object Service { get; set; }
     }
 }

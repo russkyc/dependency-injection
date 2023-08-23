@@ -1,156 +1,230 @@
-﻿// MIT License
-// 
-// Copyright (c) 2023 Russell Camo (Russkyc)
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Russkyc.DependencyInjection.Attributes;
 using Russkyc.DependencyInjection.Enums;
 using Russkyc.DependencyInjection.Exceptions;
 using Russkyc.DependencyInjection.Interfaces;
 
 namespace Russkyc.DependencyInjection.Implementations
 {
-    public class ServicesContainer : IServicesContainer,
-        IServicesCollection
+    public class ServicesContainer : IServicesContainer, IServicesCollection
     {
-        private readonly object _lock = new object();
-        private readonly ICollection<IService> _services = new List<IService>();
+        private readonly object _syncLock = new object();
+        private readonly ICollection<IRegisteredService> _registeredServices = new List<IRegisteredService>();
 
-        public IServicesCollection AddSingleton<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
+        public ServicesContainer()
         {
-            return AddSingleton<RegisteredAs, RegisteredAs>(name, builder);
-        }
-
-        public IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null)
-        {
-            var constructors = typeof(RegisteredTo).GetConstructors();
-            var parameters = constructors.Length > 0 ? constructors.FirstOrDefault(constructor => constructor.GetParameters().Length > 0)?.GetParameters() : Array.Empty<ParameterInfo>();
-            var services = (parameters ?? Array.Empty<ParameterInfo>()).Select(param => Resolve(param.ParameterType)).ToArray();
-            var registerService = constructors.Length > 0
-                ? Activator.CreateInstance(typeof(RegisteredTo), services)
-                : Activator.CreateInstance(typeof(RegisteredTo));
-            if (builder != null)
+            lock (_syncLock)
             {
-                builder((RegisteredAs)registerService);
-            }
-            lock (_lock)
-            {
-                _services.Add(new Service
+                _registeredServices.Add(new SingletonService
                 {
-                    RegisterAs = typeof(RegisteredAs),
-                    RegisterTo = typeof(RegisteredTo),
-                    RegisterService = registerService,
-                    Name = name,
-                    Type = ServiceType.Singleton
+                    RegisterAs = typeof(IServicesContainer),
+                    RegisterTo = typeof(ServicesContainer),
+                    Service = this
                 });
             }
-            return this;
         }
 
-        public IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> builder = null)
+        // Method to add a service as a singleton
+        public IServicesCollection AddSingleton<RegisteredAs>(string name = null)
         {
-            return AddTransient<RegisteredAs, RegisteredAs>(name, builder);
+            return AddSingleton<RegisteredAs, RegisteredAs>(name);
         }
 
-        public IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> builder = null)
+        // Helper method to create an instance of a registered type
+        private object ConstructRegisteredType(Type registeredToType)
         {
-            lock (_lock)
+            // Attempt to get the first constructor. If no constructor is found, default to parameter-less instance creation.
+            var constructors = registeredToType.GetConstructors();
+            if (constructors.Length == 0)
             {
-                _services.Add(new Service
-                {
-                    Name = name,
-                    RegisterAs = typeof(RegisteredAs),
-                    RegisterTo = typeof(RegisteredTo),
-                    Type = ServiceType.Transient,
-                    Builder = builder
-                });
+                return Activator.CreateInstance(registeredToType);
             }
-            return this;
-        }
 
-        public RegisterAs Resolve<RegisterAs>(string name = null)
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    var resolved = _services.First(service => service.RegisterAs == typeof(RegisterAs) && service.Name == name);
-                    switch (resolved.Type) {
-                        case ServiceType.Singleton:
-                            return (RegisterAs)resolved.RegisterService;
-                        case ServiceType.Transient:
-                            return (RegisterAs)Activator.CreateInstance(resolved.RegisterTo, resolved.RegisterTo.GetConstructors()[0].GetParameters().Select(p => Resolve(p.ParameterType)).ToArray());
-                        default:
-                            return (RegisterAs)Activator.CreateInstance(resolved.RegisterTo);
-                    }
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                throw new MissingDependencyException($"No registered dependency for type {typeof(RegisterAs)}");
-            }
+            var neededServices = constructors[0].GetParameters()
+                .Select(param => Resolve(param.ParameterType)).ToArray();
+            return Activator.CreateInstance(registeredToType, neededServices);
         }
         
-        public object Resolve(Type registerAs, string name = null)
+        public IServicesCollection AddSingleton(Type registeredAs, Type registeredTo, string name = null)
+        {
+            var singletonService = new SingletonService
+            {
+                Identifier = name,
+                RegisterAs = registeredAs,
+                RegisterTo = registeredTo
+            };
+            lock (_syncLock)
+            {
+                _registeredServices.Add(singletonService);
+            }
+
+            return this;
+        }
+
+        // Method to add a service as a singleton with option to specify a different registered type
+        public IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null)
+        {
+            return AddSingleton(typeof(RegisteredAs), typeof(RegisteredTo), name);
+        }
+        
+        public IServicesCollection AddTransient(Type registeredAs, Type registeredTo, string name = null)
+        {
+            var transientService = new TransientService
+            {
+                Identifier = name,
+                RegisterAs = registeredAs,
+                RegisterTo = registeredTo
+            };
+            lock (_syncLock)
+            {
+                _registeredServices.Add(transientService);
+            }
+
+            return this;
+        }
+
+        // Method to add a service as a transient
+        public IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> serviceBuilder = null)
+        {
+            return AddTransient<RegisteredAs, RegisteredAs>(name, serviceBuilder);
+        }
+
+        // Method to add a service as a transient with option to specify a different registered type
+        public IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> serviceBuilder = null)
+        {
+            var transientService = new TransientService
+            {
+                Identifier = name,
+                RegisterAs = typeof(RegisteredAs),
+                RegisterTo = typeof(RegisteredTo)
+            };
+
+            lock (_syncLock) 
+            {
+                _registeredServices.Add(transientService);
+            }
+
+            return this;
+        }
+
+        // Helper method to get an instance of a service
+        private object ResolveServiceInstance(IRegisteredService service)
+        {
+            // If service is registered as Singleton, return the instance created at registration
+            // If service is registered as Transient, create a new instance.
+
+            if (service.GetType() == typeof(SingletonService))
+            {
+                if (service.Service is null)
+                {
+                    var instanceOfRegisteredTo = ConstructRegisteredType(service.RegisterTo);
+                    service.Service = instanceOfRegisteredTo;
+                }
+                return service.Service;
+            }
+            return ConstructRegisteredType(service.RegisterTo);
+        }
+
+        // Method to resolve a service instance by generic type
+        public RegisteredAs Resolve<RegisteredAs>(string name = null)
+        {
+            return (RegisteredAs) Resolve(typeof(RegisteredAs), name);
+        }
+
+        // Method to resolve a service instance by type
+        public object Resolve(Type registeredAs, string name = null)
         {
             try
             {
-                lock (_lock)
+                if (name is null)
                 {
-                    var resolved = _services.First(service => service.RegisterAs == registerAs && service.Name == name);
-
-                    if (resolved.Type == ServiceType.Singleton)
+                    lock (_syncLock)
                     {
-                        return resolved.RegisterService;
+                        return ResolveServiceInstance(
+                            _registeredServices.First(service => service.RegisterAs == registeredAs));
                     }
-                    
-                    return Activator.CreateInstance(resolved.RegisterTo,
-                        resolved.RegisterTo
-                            .GetConstructors()[0]
-                            .GetParameters()
-                            .Select(p => Resolve(p.ParameterType))
-                            .ToArray());
+                }
+
+                lock (_syncLock)
+                {
+                    return ResolveServiceInstance(
+                        _registeredServices.First(service => service.RegisterAs == registeredAs && service.Identifier == name));
                 }
             }
             catch (InvalidOperationException)
             {
-                throw new MissingDependencyException($"No registered dependency for type {registerAs}");
-            }
-        }
-
-        public ICollection<IService> GetServices()
-        {
-            lock (_lock)
-            {
-                return _services;
+                throw new MissingDependencyException($"No registered dependency for type {registeredAs}");
             }
         }
         
+        public IServicesContainer AddServicesFromAssembly(Assembly assembly)
+        {
+            var assemblyTypes = assembly.DefinedTypes
+                .Where(type => Attribute.IsDefined(type, typeof(ServiceAttribute)));
+            foreach (var type in assemblyTypes)
+                    {
+                        var t = type;
+                        var serviceAttribute = type.GetCustomAttribute<ServiceAttribute>();
+        
+                        if (serviceAttribute == null)
+                        {
+                            continue;
+                        }
+                        
+                        var registration = serviceAttribute.Registration;
+                        
+                        if (registration == Registration.AsSelf)
+                        {
+                            if (serviceAttribute.Scope == Scope.Singleton)
+                            {
+                                AddSingleton(type, type);
+                                continue;
+                            }
+                            AddTransient(type, type);
+                            continue;
+                        }
+        
+                        if (registration == Registration.AsInterfaces)
+                        {
+                            foreach (var serviceType in type.ImplementedInterfaces)
+                            {
+                                if (serviceAttribute.Scope == Scope.Singleton)
+                                {
+                                    AddSingleton(serviceType, type);
+                                    continue;
+                                }
+                                AddTransient(serviceType, type);
+                            }
+                            continue;
+                        }
+                        
+                        if (serviceAttribute.Scope == Scope.Singleton)
+                        {
+                            AddSingleton(type, type);
+                            continue;
+                        }
+                        AddTransient(type, type);
+                        
+                        foreach (var serviceType in type.ImplementedInterfaces)
+                        {
+                            if (serviceAttribute.Scope == Scope.Singleton)
+                            {
+                                AddSingleton(serviceType, type);
+                                continue;
+                            }
+                            AddTransient(serviceType, type);
+                        }
+                    }
+            return this;
+        }
+
+        // Method to complete the build
         public IServicesContainer Build()
         {
             return this;
         }
-
-
     }
 }

@@ -21,13 +21,17 @@
 // SOFTWARE.
 
 using System.Windows;
+using DependencyInjectionDemo.Interfaces;
+using Russkyc.DependencyInjection.Attributes;
 
 namespace DependencyInjectionDemo.Views;
 
+[Service]
 public partial class SecondaryView : Window
 {
-    public SecondaryView()
+    public SecondaryView(IMainViewModel viewModel)
     {
+        DataContext = viewModel;
         InitializeComponent();
     }
 }

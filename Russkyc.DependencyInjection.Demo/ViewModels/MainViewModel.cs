@@ -2,10 +2,13 @@
 using CommunityToolkit.Mvvm.Input;
 using DependencyInjectionDemo.Interfaces;
 using DependencyInjectionDemo.Views;
+using Russkyc.DependencyInjection.Attributes;
+using Russkyc.DependencyInjection.Enums;
 using Russkyc.DependencyInjection.Interfaces;
 
 namespace DependencyInjectionDemo.ViewModels;
 
+[Service(Scope.Transient, Registration.AsInterfaces)]
 public partial class MainViewModel : ViewModelBase, IMainViewModel
 {
     [ObservableProperty]
@@ -15,11 +18,13 @@ public partial class MainViewModel : ViewModelBase, IMainViewModel
 
     public MainViewModel(
         ILogger logger,
+        // Inject container
         IServicesContainer container)
     {
+        // Use
+        container.Resolve<SecondaryView>().Show();
+        
         _logger = logger;
-        container.Resolve<SecondaryView>()
-            .Show();
         WelcomeMessage = "Welcome to your MVVM App!";
     }
 

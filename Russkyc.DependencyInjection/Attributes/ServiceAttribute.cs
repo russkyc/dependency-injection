@@ -21,37 +21,19 @@
 // SOFTWARE.
 
 using System;
-using Russkyc.DependencyInjection.Interfaces;
+using Russkyc.DependencyInjection.Enums;
 
-namespace Russkyc.DependencyInjection.Implementations
+namespace Russkyc.DependencyInjection.Attributes
 {
-    public static class BuilderServices
+    public class ServiceAttribute : Attribute
     {
-        private static IServicesContainer _servicesContainer;
-
-        public static void BuildWithContainer(IServicesContainer servicesContainer)
+        public ServiceAttribute(Scope scope = Scope.Transient, Registration registration = Registration.AsSelf)
         {
-            _servicesContainer = servicesContainer;
-        }
-        
-        public static T Resolve<T>()
-        {
-            return (T) _servicesContainer.Resolve(typeof(T));
+            Scope = scope;
+            Registration = registration;
         }
 
-        public static object Resolve(object type)
-        {
-            return _servicesContainer.Resolve(type.GetType());
-        }
-        
-        public static object Resolve(Type type)
-        {
-            return _servicesContainer.Resolve(type);
-        }
-        
-        public static TRegisterAs Resolve<TRegisterAs>(string name)
-        {
-            return _servicesContainer.Resolve<TRegisterAs>(name);
-        }
+        public Scope Scope { get; }
+        public Registration Registration { get; }
     }
 }

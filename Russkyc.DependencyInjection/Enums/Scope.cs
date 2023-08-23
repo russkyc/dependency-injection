@@ -20,20 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-
-namespace Russkyc.DependencyInjection.Interfaces
+namespace Russkyc.DependencyInjection.Enums
 {
-    public interface IServicesCollection
+    public enum Scope
     {
-        IServicesCollection AddSingleton<RegisteredAs>(string name = null);
-        IServicesCollection AddSingleton(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null);
-        IServicesCollection AddTransient(Type registeredAs, Type registeredTo, string name = null);
-        IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> serviceBuilder = null);
-        IServicesContainer AddServicesFromAssembly(Assembly assembly);
-        IServicesContainer Build();
+        Singleton,
+        Transient
     }
 }

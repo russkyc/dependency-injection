@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Russkyc.DependencyInjection.Attributes;
+using Russkyc.DependencyInjection.Enums;
 using Russkyc.DependencyInjection.Exceptions;
 using Russkyc.DependencyInjection.Interfaces;
 
@@ -25,9 +28,9 @@ namespace Russkyc.DependencyInjection.Implementations
         }
 
         // Method to add a service as a singleton
-        public IServicesCollection AddSingleton<RegisteredAs>(string name = null, Action<RegisteredAs> serviceBuilder = null)
+        public IServicesCollection AddSingleton<RegisteredAs>(string name = null)
         {
-            return AddSingleton<RegisteredAs, RegisteredAs>(name, serviceBuilder);
+            return AddSingleton<RegisteredAs, RegisteredAs>(name);
         }
 
         // Helper method to create an instance of a registered type
@@ -44,19 +47,40 @@ namespace Russkyc.DependencyInjection.Implementations
                 .Select(param => Resolve(param.ParameterType)).ToArray();
             return Activator.CreateInstance(registeredToType, neededServices);
         }
-
-        // Method to add a service as a singleton with option to specify a different registered type
-        public IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> serviceBuilder = null)
+        
+        public IServicesCollection AddSingleton(Type registeredAs, Type registeredTo, string name = null)
         {
             var singletonService = new SingletonService
             {
                 Identifier = name,
-                RegisterAs = typeof(RegisteredAs),
-                RegisterTo = typeof(RegisteredTo)
+                RegisterAs = registeredAs,
+                RegisterTo = registeredTo
             };
             lock (_syncLock)
             {
                 _registeredServices.Add(singletonService);
+            }
+
+            return this;
+        }
+
+        // Method to add a service as a singleton with option to specify a different registered type
+        public IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null)
+        {
+            return AddSingleton(typeof(RegisteredAs), typeof(RegisteredTo), name);
+        }
+        
+        public IServicesCollection AddTransient(Type registeredAs, Type registeredTo, string name = null)
+        {
+            var transientService = new TransientService
+            {
+                Identifier = name,
+                RegisterAs = registeredAs,
+                RegisterTo = registeredTo
+            };
+            lock (_syncLock)
+            {
+                _registeredServices.Add(transientService);
             }
 
             return this;
@@ -134,6 +158,67 @@ namespace Russkyc.DependencyInjection.Implementations
             {
                 throw new MissingDependencyException($"No registered dependency for type {registeredAs}");
             }
+        }
+        
+        public IServicesContainer AddServicesFromAssembly(Assembly assembly)
+        {
+            var assemblyTypes = assembly.DefinedTypes
+                .Where(type => Attribute.IsDefined(type, typeof(ServiceAttribute)));
+            foreach (var type in assemblyTypes)
+                    {
+                        var t = type;
+                        var serviceAttribute = type.GetCustomAttribute<ServiceAttribute>();
+        
+                        if (serviceAttribute == null)
+                        {
+                            continue;
+                        }
+                        
+                        var registration = serviceAttribute.Registration;
+                        
+                        if (registration == Registration.AsSelf)
+                        {
+                            if (serviceAttribute.Scope == Scope.Singleton)
+                            {
+                                AddSingleton(type, type);
+                                continue;
+                            }
+                            AddTransient(type, type);
+                            continue;
+                        }
+        
+                        if (registration == Registration.AsInterfaces)
+                        {
+                            foreach (var serviceType in type.ImplementedInterfaces)
+                            {
+                                if (serviceAttribute.Scope == Scope.Singleton)
+                                {
+                                    AddSingleton(serviceType, type);
+                                    continue;
+                                }
+                                AddTransient(serviceType, type);
+                            }
+                            continue;
+                        }
+                        
+                        if (serviceAttribute.Scope == Scope.Singleton)
+                        {
+                            AddSingleton(type, type);
+                            continue;
+                        }
+                        AddTransient(type, type);
+                        
+                        foreach (var serviceType in type.ImplementedInterfaces)
+                        {
+                            if (serviceAttribute.Scope == Scope.Singleton)
+                            {
+                                AddSingleton(serviceType, type);
+                                continue;
+                            }
+                            AddTransient(serviceType, type);
+                        }
+                    }
+            return this;
         }
 
         // Method to complete the build

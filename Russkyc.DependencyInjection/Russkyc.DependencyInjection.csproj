@@ -6,11 +6,11 @@
         <Copyright>Russell Camo 2023</Copyright>
         <Authors>Russell Camo</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>1.1.2</Version>
+        <Version>2.0.0</Version>
         <LangVersion>8</LangVersion>
         <PackageProjectUrl>https://github.com/russkyc/dependency-injection</PackageProjectUrl>
         <RepositoryUrl>https://github.com/russkyc/dependency-injection</RepositoryUrl>
-        <PackageReleaseNotes></PackageReleaseNotes>
+        <PackageReleaseNotes>Add service registration by attribute, Removed BuilderServices. See repo for updated setup.</PackageReleaseNotes>
     </PropertyGroup>
     <PropertyGroup>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -18,7 +18,6 @@
     <ItemGroup>
         <None Update="Resources\Images\Russkyc.png">
             <Pack>True</Pack>
-            <PackagePath></PackagePath>
         </None>
         <None Remove="README.md" />
     </ItemGroup>

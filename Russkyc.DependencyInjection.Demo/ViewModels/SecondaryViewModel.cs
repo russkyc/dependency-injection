@@ -20,9 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace TestNewAssembly;
+using DependencyInjectionDemo.Interfaces;
+using Russkyc.DependencyInjection.Attributes;
+using Russkyc.DependencyInjection.Enums;
 
-public interface IClass1
+namespace DependencyInjectionDemo.ViewModels;
+
+[Service(registration: Registration.AsInterfaces)]
+public class SecondaryViewModel : ViewModelBase, ISecondaryViewModel
 {
-    public void SayHellow();
+    
 }

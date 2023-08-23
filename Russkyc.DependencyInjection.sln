@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Russkyc.DependencyInjection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Russkyc.DepencyInjection.Demo", "Russkyc.DependencyInjection.Demo\Russkyc.DepencyInjection.Demo.csproj", "{1789D627-EAD3-40AB-BD59-D4E6A04F95CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestNewAssembly", "TestNewAssembly\TestNewAssembly.csproj", "{23101A1A-39A9-43CD-BB4A-D939CA400B62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Russkyc.DependencyInjection.Demo.Services", "Russkyc.DependencyInjection.Demo.Services\Russkyc.DependencyInjection.Demo.Services.csproj", "{BCC2C5BD-FBB3-4DB8-8EFA-C2AB0A9E5A31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,10 +20,10 @@ Global
 		{1789D627-EAD3-40AB-BD59-D4E6A04F95CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1789D627-EAD3-40AB-BD59-D4E6A04F95CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1789D627-EAD3-40AB-BD59-D4E6A04F95CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{23101A1A-39A9-43CD-BB4A-D939CA400B62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{23101A1A-39A9-43CD-BB4A-D939CA400B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{23101A1A-39A9-43CD-BB4A-D939CA400B62}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{23101A1A-39A9-43CD-BB4A-D939CA400B62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCC2C5BD-FBB3-4DB8-8EFA-C2AB0A9E5A31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCC2C5BD-FBB3-4DB8-8EFA-C2AB0A9E5A31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCC2C5BD-FBB3-4DB8-8EFA-C2AB0A9E5A31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCC2C5BD-FBB3-4DB8-8EFA-C2AB0A9E5A31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

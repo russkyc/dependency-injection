@@ -57,43 +57,51 @@ public partial class MainViewModel : ViewModelBase, IMainViewModel
 }
 ```
 
-> NOTE: The scope and registration options are optional, each can be set if needed. By default the scope is _Scope.Tranient_ and the registration option is _Registration.AsSelf_
+> **NOTE:** The scope and registration options are optional, each can be set if needed. By default the scope is _Scope.Tranient_ and the registration option is _Registration.AsSelf_
 
 
 ### 2. Setup and Run in Application Entry
-
-Wpf Sample
-
+Use the `AddServices()` to resolve the services from the current assembly.
 ```csharp
-public App()
-{
-    // Get Current Assembly
-    var assembly = Assembly.GetExecutingAssembly();
-    
-    // Build Container
-    var container = new ServicesContainer()
-        // Add Services from Assembly
-        .AddServicesFromAssembly(assembly);
-    
-    // You are now Ready to Go!
-    var window = container.Resolve<MainView>();
-    window.Show();
-}
+// Build Container
+var container = new ServicesCollection()
+    .AddServices() // Add Services From Entry Assembly
+    .AddServicesFromReferenceAssemblies() // Add Services From External Referenced Assemblies (Eg; Project References)
+    .Build();
+
+// You are now Ready to Go!
+var window = container.Resolve<MainView>();
+window.Show();
 ```
 
+#### Working with External/Referenced Assemblies
+If you want to work with specific projects/assemblies you can also use one of these methods before build:
+- Specific assembly: `.AddServicesFromAssembly(assembly)`
+- External assembly references of specific assembly: `.AddServicesFromReferenceAssemblies(assembly)`
+
+```csharp
+// Build Container
+
+var assembly = Assembly.Load("AssemblyName"); // Specific Assembly
+
+var container = new ServicesCollection()
+    .AddServicesFromAssembly(assembly) // Add Services From Assembly
+    .AddServicesFromAssemblyReferences(assembly) // Add Services From External Referenced Assemblies
+    .Build();
+```
 ---
 
 ## Manual Setup
-> No Attributes are required in manual setup. Registration is done manually using the `AddSingleton` and `AddTransient` methods of the container
 
+You can also register dependencies manually if needed, this also works alongside the default setup.
 ### 1. Creating the Container
 
 ```csharp
-var services = new ServicesContainer()
+var services = new ServicesCollection()
             .AddSingleton<ILogger, ConsoleLogger>()
             .AddSingleton<IMainViewModel, MainViewModel>()
             .AddTransient<MainView>()
-            .Build;
+            .Build();
 ```
 
 ### 2. Resolving
@@ -102,6 +110,8 @@ var services = new ServicesContainer()
 var window = services.Resolve<MainView>();
 window.Show();
 ```
+
+> **NOTE:** No Attributes are required in manual setup. Registration is done manually using the `AddSingleton` and `AddTransient` methods
 
 ---
 

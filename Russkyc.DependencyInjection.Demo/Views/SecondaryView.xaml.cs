@@ -29,7 +29,7 @@ namespace DependencyInjectionDemo.Views;
 [Service]
 public partial class SecondaryView : Window
 {
-    public SecondaryView(IMainViewModel viewModel)
+    public SecondaryView(ISecondaryViewModel viewModel)
     {
         DataContext = viewModel;
         InitializeComponent();

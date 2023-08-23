@@ -15,15 +15,10 @@ public partial class App
     /// </summary>
     public App()
     {
-        // Get Current Assembly
-        var assembly = Assembly.GetExecutingAssembly();
-        var assembly2 = Assembly.Load("TestNewAssembly");
-        
         // Build Container
         var container = new ServicesCollection()
-            // Add Services From Assembly
-            .AddServicesFromAssembly(assembly2)
-            .AddServicesFromAssembly(assembly)
+            .AddServices() // Add Services From Entry Assembly
+            .AddServicesFromReferenceAssemblies() // Add Services From External Referenced Assemblies
             .Build();
         
         container.Resolve<MainView>().Show();

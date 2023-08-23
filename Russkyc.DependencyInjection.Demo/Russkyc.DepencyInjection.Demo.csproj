@@ -15,8 +15,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Russkyc.DependencyInjection.Demo.Services\Russkyc.DependencyInjection.Demo.Services.csproj" />
       <ProjectReference Include="..\Russkyc.DependencyInjection\Russkyc.DependencyInjection.csproj" />
-      <ProjectReference Include="..\TestNewAssembly\TestNewAssembly.csproj" />
     </ItemGroup>
 
 </Project>

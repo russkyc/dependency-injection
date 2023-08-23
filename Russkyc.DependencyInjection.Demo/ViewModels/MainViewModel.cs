@@ -2,8 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using DependencyInjectionDemo.Interfaces;
 using Russkyc.DependencyInjection.Attributes;
+using Russkyc.DependencyInjection.Demo.Services.Interfaces;
 using Russkyc.DependencyInjection.Enums;
-using TestNewAssembly;
+using Russkyc.DependencyInjection.Interfaces;
 
 namespace DependencyInjectionDemo.ViewModels;
 
@@ -12,15 +13,15 @@ public partial class MainViewModel : ViewModelBase, IMainViewModel
 {
     [ObservableProperty]
     private string? _welcomeMessage;
-    
     private readonly ILogger _logger;
+    private readonly IServicesContainer _container;
 
     public MainViewModel(
         ILogger logger,
-        IClass1 class1)
+        IServicesContainer container)
     {
-        var t = class1;
         _logger = logger;
+        _container = container;
         WelcomeMessage = "Welcome to your MVVM App!";
     }
 

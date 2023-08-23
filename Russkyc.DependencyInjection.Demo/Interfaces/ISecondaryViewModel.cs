@@ -20,24 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using DependencyInjectionDemo.Interfaces;
-using DependencyInjectionDemo.Models;
-using DependencyInjectionDemo.ViewModels;
-using DependencyInjectionDemo.Views;
-using Russkyc.DependencyInjection.Implementations;
-using Russkyc.DependencyInjection.Interfaces;
+namespace DependencyInjectionDemo.Interfaces;
 
-namespace DependencyInjectionDemo.Services;
-
-public static class BuildContainer
+public interface ISecondaryViewModel
 {
-    public static IServicesContainer ConfigureServices()
-    {
-        return new ServicesCollection()
-            .AddSingleton<ILogger,ConsoleLogger>()
-            .AddSingleton<IMainViewModel,MainViewModel>()
-            .AddSingleton<SecondaryView>()
-            .AddTransient<MainView>()
-            .Build();
-    }
+    
 }

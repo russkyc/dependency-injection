@@ -1,4 +1,4 @@
-﻿namespace DependencyInjectionDemo.Interfaces;
+﻿namespace Russkyc.DependencyInjection.Demo.Services.Interfaces;
 
 public interface ILogger
 {

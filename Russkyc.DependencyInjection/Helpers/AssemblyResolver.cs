@@ -31,6 +31,12 @@ namespace Russkyc.DependencyInjection.Helpers
 {
     public static class AssemblyResolver
     {
+
+        public static IServicesCollection AddServices(this IServicesCollection collection)
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            return collection.AddServicesFromAssembly(assembly);
+        }
         
         public static IServicesCollection AddServicesFromAssembly(this IServicesCollection collection, Assembly assembly)
         {
@@ -72,6 +78,21 @@ namespace Russkyc.DependencyInjection.Helpers
                         }
                     }
                 }
+            }
+            return collection;
+        }
+        
+        public static IServicesCollection AddServicesFromReferenceAssemblies(this IServicesCollection collection)
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            return collection.AddServicesFromReferenceAssemblies(assembly);
+        }
+        
+        public static IServicesCollection AddServicesFromReferenceAssemblies(this IServicesCollection collection, Assembly assembly)
+        {
+            foreach (var referenceAssembly in assembly.GetReferencedAssemblies())
+            {
+                collection.AddServicesFromAssembly(Assembly.Load(referenceAssembly));
             }
             return collection;
         }

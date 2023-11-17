@@ -9,7 +9,7 @@
         <LangVersion>8</LangVersion>
         <PackageProjectUrl>https://github.com/russkyc/dependency-injection</PackageProjectUrl>
         <RepositoryUrl>https://github.com/russkyc/dependency-injection</RepositoryUrl>
-        <Version>2.2.2</Version>
+        <Version>2.2.6</Version>
         <PackageReleaseNotes>- Add Hosting style setup
             - Updated sample project</PackageReleaseNotes>
     </PropertyGroup>

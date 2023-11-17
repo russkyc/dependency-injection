@@ -31,7 +31,7 @@ namespace Russkyc.DependencyInjection.Implementations
         private readonly IServicesCollection _collection;
 
         public IServicesContainer Services => _collection.Build();
-        public T Root;
+        public T Root => Services.Resolve<T>();
 
         private ApplicationHost()
         {
@@ -45,7 +45,6 @@ namespace Russkyc.DependencyInjection.Implementations
                 .AddSingleton<T>()
                 .AddServices()
                 .AddServicesFromReferenceAssemblies();
-            applicationHost.Root = applicationHost.Services.Resolve<T>();
             return applicationHost;
         }
         
@@ -56,7 +55,6 @@ namespace Russkyc.DependencyInjection.Implementations
                 .Add(instance)
                 .AddServices()
                 .AddServicesFromReferenceAssemblies();
-            applicationHost.Root = applicationHost.Services.Resolve<T>();
             return applicationHost;
         }
 

@@ -37,7 +37,9 @@ namespace Russkyc.DependencyInjection.Helpers
                 return Activator.CreateInstance(registeredToType);
             }
 
-            var neededServices = constructors[0].GetParameters()
+            var neededServices = constructors.OrderByDescending(constructor => constructor.GetParameters().Length)
+                .First()
+                .GetParameters()
                 .Select(param => servicesContainer.Resolve(param.ParameterType)).ToArray();
             return Activator.CreateInstance(registeredToType, neededServices);
         }

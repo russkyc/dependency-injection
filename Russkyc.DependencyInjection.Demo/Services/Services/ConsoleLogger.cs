@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using DependencyInjectionDemo.Services.Interfaces;
 using Russkyc.DependencyInjection.Attributes;
-using Russkyc.DependencyInjection.Demo.Services.Interfaces;
 using Russkyc.DependencyInjection.Enums;
 
-namespace Russkyc.DependencyInjection.Demo.Services.Services;
+namespace DependencyInjectionDemo.Services.Services;
 
 // Defined scope and Registration Type
 [Service(Scope.Singleton, Registration.AsInterfaces)]
@@ -12,7 +12,7 @@ public class ConsoleLogger : ILogger
 {
     private string? _name;
 
-    public void setName(string name)
+    public void SetName(string name)
     {
         _name = name;
     }

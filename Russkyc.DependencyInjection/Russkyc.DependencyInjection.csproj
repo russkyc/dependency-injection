@@ -6,11 +6,12 @@
         <Copyright>Russell Camo 2023</Copyright>
         <Authors>Russell Camo</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>2.2.0</Version>
         <LangVersion>8</LangVersion>
         <PackageProjectUrl>https://github.com/russkyc/dependency-injection</PackageProjectUrl>
         <RepositoryUrl>https://github.com/russkyc/dependency-injection</RepositoryUrl>
-        <PackageReleaseNotes></PackageReleaseNotes>
+        <Version>2.2.2</Version>
+        <PackageReleaseNotes>- Add Hosting style setup
+            - Updated sample project</PackageReleaseNotes>
     </PropertyGroup>
     <PropertyGroup>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

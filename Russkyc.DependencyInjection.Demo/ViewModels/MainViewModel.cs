@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DependencyInjectionDemo.Interfaces;
+using DependencyInjectionDemo.Services.Interfaces;
 using Russkyc.DependencyInjection.Attributes;
-using Russkyc.DependencyInjection.Demo.Services.Interfaces;
 using Russkyc.DependencyInjection.Enums;
 using Russkyc.DependencyInjection.Interfaces;
 
@@ -28,7 +28,7 @@ public partial class MainViewModel : ViewModelBase, IMainViewModel
     [RelayCommand]
     private void Log()
     {
-        _logger.setName($"{GetType().Name}: ");
+        _logger.SetName($"{GetType().Name}: ");
         _logger.Log(WelcomeMessage!);
     }
 }

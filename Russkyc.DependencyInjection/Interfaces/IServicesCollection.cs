@@ -30,6 +30,7 @@ namespace Russkyc.DependencyInjection.Interfaces
         IServicesCollection AddSingleton<RegisteredAs>(string name = null);
         IServicesCollection AddSingleton(Type registeredAs, Type registeredTo, string name = null);
         IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null);
+        IServicesCollection Add<T>(T instance, string name = null);
         IServicesCollection AddTransient(Type registeredAs, Type registeredTo, string name = null);
         IServicesCollection AddTransient<RegisteredAs>(string name = null, Action<RegisteredAs> serviceBuilder = null);
         IServicesCollection AddTransient<RegisteredAs, RegisteredTo>(string name = null, Action<RegisteredAs> serviceBuilder = null);

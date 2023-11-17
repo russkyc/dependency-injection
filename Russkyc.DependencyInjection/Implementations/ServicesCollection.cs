@@ -22,7 +22,7 @@ namespace Russkyc.DependencyInjection.Implementations
             {
                 Identifier = name,
                 RegisterAs = registeredAs,
-                RegisterTo = registeredTo,
+                RegisterTo = registeredTo
             };
             lock (_syncLock)
             {
@@ -35,6 +35,22 @@ namespace Russkyc.DependencyInjection.Implementations
         public IServicesCollection AddSingleton<RegisteredAs, RegisteredTo>(string name = null)
         {
             return AddSingleton(typeof(RegisteredAs), typeof(RegisteredTo), name);
+        }
+
+        public IServicesCollection Add<T>(T instance, string name = null)
+        {
+            var singletonService = new SingletonService
+            {
+                Identifier = name,
+                RegisterAs = typeof(T),
+                RegisterTo = typeof(T),
+                Service = instance
+            };
+            lock (_syncLock)
+            {
+                _registeredServices.Add(singletonService);
+                return this;
+            }
         }
         
         public IServicesCollection AddTransient(Type registeredAs, Type registeredTo, string name = null)

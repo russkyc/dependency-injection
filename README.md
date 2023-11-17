@@ -15,6 +15,34 @@
 
 ---
 
+## What's New in 2.2.2
+
+- Added Hosting style setup
+
+**Sample with new setup**
+
+```csharp
+// Hosting setup
+var host = ApplicationHost<MainView>.CreateDefault();
+
+// Root is typeof(Window) so we call Show();
+host.Root.Show();
+```
+
+That simple! It automatically registers the attribute decorated services for the
+root assembly and dependency assemblies. But you can also configure services manually as well
+before calling the root
+
+```csharp
+// Configuring services that don't have attribute decorations
+host.ConfigureServices(services =>
+{
+    // All the registration methods work here
+    services.AddSingleton<ILogger, ConsoleLogger>();
+});
+```
+That easy!
+
 ## Basic Setup
 
 ### 1. Service Registration

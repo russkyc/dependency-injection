@@ -1,16 +1,15 @@
 <h2 align="center">Russkyc.DependencyInjection</h2>
 
 <p align="center">
-    <a href="https://www.nuget.org/packages/Russkyc.DependencyInjection">
-        <img src="https://img.shields.io/nuget/v/Russkyc.DependencyInjection?color=1f72de" alt="Nuget">
-    </a>
-    <a href="#">
-        <img src="https://img.shields.io/badge/-.NET%202.0-blueviolet?color=1f72de&label=NET" alt="">
-    </a>
+    <img src="https://img.shields.io/nuget/v/Russkyc.DependencyInjection?color=1f72de" alt="Nuget">
+    <img src="https://img.shields.io/badge/-.NET%208.0-blueviolet?color=1f72de&label=NET" alt="">
+    <img src="https://img.shields.io/github/license/russkyc/dependency-injection">
+    <img src="https://img.shields.io/github/issues/russkyc/dependency-injection">
+    <img src="https://img.shields.io/nuget/dt/Russkyc.DependencyInjection">
 </p>
 
 <p align="center">
-<a href="https://www.nuget.org/packages/Russkyc.DependencyInjection">Russkyc.DependencyInjection</a> is a fast and minimal dependency injection container with auto dependency resolving.
+<a href="https://www.nuget.org/packages/Russkyc.DependencyInjection">Russkyc.DependencyInjection</a> is a fast and minimal DI container with auto dependency resolving.
 </p>
 
 ---
